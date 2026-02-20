@@ -1,0 +1,9 @@
+__pycache__/
+*.pyc
+build/
+dist/
+*.spec.bak
+cache/
+assets/wallpaper.png
+waktu_solat.log
+.claude/
