@@ -3,3 +3,4 @@ Pillow
 pystray
 APScheduler
 pywin32
+winotify

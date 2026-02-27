@@ -155,8 +155,19 @@ def fetch_daily():
     if times:
         _prayer_times = times
         logger.info("Daily prayer times updated for %s", _current_city)
+        _schedule_notifications()
     else:
         logger.warning("Failed to fetch daily prayer times for %s", _current_city)
+
+
+def _schedule_notifications():
+    """Schedule prayer notifications based on current prayer times."""
+    import scheduler
+    from notifications import schedule_prayer_notifications
+
+    sched = scheduler.get_scheduler()
+    if sched and _prayer_times:
+        schedule_prayer_notifications(sched, _prayer_times)
 
 
 def on_city_change(city_key: str):

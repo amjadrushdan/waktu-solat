@@ -7,6 +7,11 @@ logger = logging.getLogger(__name__)
 _scheduler: BackgroundScheduler | None = None
 
 
+def get_scheduler() -> BackgroundScheduler | None:
+    """Return the scheduler instance for adding notification jobs."""
+    return _scheduler
+
+
 def start(refresh_wallpaper_fn, fetch_daily_fn) -> None:
     """Start the background scheduler with two jobs.
 
