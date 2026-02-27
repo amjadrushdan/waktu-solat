@@ -204,6 +204,14 @@ def on_exit():
     logger.info("App exiting")
 
 
+def _check_updates_background():
+    """Check for updates in the background and notify if available."""
+    import updater
+    has_update, version = updater.check_for_updates()
+    if has_update:
+        updater.show_update_notification(version)
+
+
 def main():
     global _current_city
 
@@ -230,7 +238,12 @@ def main():
     # 3. Start scheduler
     scheduler.start(refresh_wallpaper, fetch_daily)
 
-    # 4. Start tray icon (blocking)
+    # 4. Check for updates in the background (non-blocking)
+    import threading
+    update_thread = threading.Thread(target=_check_updates_background, daemon=True)
+    update_thread.start()
+
+    # 5. Start tray icon (blocking)
     try:
         create_tray(get_tray_info, refresh_wallpaper, on_exit, on_city_change, get_current_city)
     except KeyboardInterrupt:

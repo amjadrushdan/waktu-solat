@@ -5,6 +5,7 @@ import pystray
 from PIL import Image, ImageDraw
 
 from config import CITIES
+import updater
 
 logger = logging.getLogger(__name__)
 
@@ -47,6 +48,27 @@ def create_tray(get_next_prayer_fn, on_refresh, on_exit, on_city_change, get_cur
     def _refresh(icon, item):
         on_refresh()
 
+    def _check_update(icon, item):
+        has_update, version = updater.check_for_updates()
+        if has_update:
+            updater.show_update_notification(version)
+        else:
+            updater.show_no_update_notification()
+
+    def _do_update(icon, item):
+        has_update, _ = updater.get_update_state()
+        if has_update:
+            icon.visible = False
+            icon.stop()
+            updater.download_and_apply_update(on_exit)
+
+    def _get_update_text(item):
+        return updater.get_update_menu_text()
+
+    def _is_update_available(item):
+        has_update, _ = updater.get_update_state()
+        return has_update
+
     def _make_city_callback(city_key):
         def _cb(icon, item):
             on_city_change(city_key)
@@ -71,6 +93,10 @@ def create_tray(get_next_prayer_fn, on_refresh, on_exit, on_city_change, get_cur
 
     menu = pystray.Menu(
         pystray.MenuItem("City", pystray.Menu(*city_items)),
+        pystray.Menu.SEPARATOR,
+        pystray.MenuItem(_get_update_text, None, enabled=False),
+        pystray.MenuItem("Check for Updates", _check_update),
+        pystray.MenuItem("Update Now", _do_update, visible=_is_update_available),
         pystray.Menu.SEPARATOR,
         pystray.MenuItem("Refresh Now", _refresh),
         pystray.MenuItem("Exit", _quit),

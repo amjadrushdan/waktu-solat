@@ -1,6 +1,10 @@
 import ctypes
 import os
 
+# App info
+APP_VERSION = "1.1.0"
+GITHUB_REPO = "amjadrushdan/waktu-solat"
+
 # Location defaults
 DEFAULT_CITY = "Kuala Lumpur"
 COUNTRY = "Malaysia"
